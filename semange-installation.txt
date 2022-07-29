@@ -1,0 +1,38 @@
+
+If find the below error 
+httpd Server not started: (13)Permission denied: make_sock: could not bind to address [::]:88
+
+semanage (SELinux Policy Management Tool) is used to configure certain parts of SELinux policy without requiring modification to or recompilation from policy sources.
+
+This post will help you to install the necessary packages for getting semanage command.
+
+Let’s see which package provides us the semanage command using the YUM command.
+
+yum whatprovides semanage
+
+or
+
+yum provides *bin/semanage
+
+Now, install the policycoreutils-python-utils package using the YUM command.
+
+yum install -y policycoreutils-python-utils
+
+
+-----------------------------------------------------------------------------------------------
+
+Solution
+-------
+
+I happened to run into this problem because of missing SELinux permissions. By default, SELinux only allowed apache/httpd to bind to the following ports:
+
+80, 81, 443, 488, 8008, 8009, 8443, 9000
+
+So binding to my httpd.conf-configured Listen 88 HTTP port and config.d/ssl.conf-configured Listen 8445 TLS/SSL port would fail with that default SELinux configuration.
+
+To fix my problem, I had to add ports 88 and 8445 to my system's SELinux configuration:
+
+    Install semanage tools: sudo yum -y install policycoreutils-python
+    Allow port 88 for httpd: sudo semanage port -a -t http_port_t -p tcp 88
+    Allow port 8445 for httpd: sudo semanage port -a -t http_port_t -p tcp 8445
+

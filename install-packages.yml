@@ -1,0 +1,17 @@
+---
+- name: This playbook isto install Packages
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Install package
+      yum:
+        #name: ['git', 'make', 'gcc', 'wget', 'gzip', 'telnet', 'curl']
+        name: "{{ item }}"           
+        state: latest  
+      with_items:
+        - git
+        - make
+        - gcc
+        - nginx
+        - wget
+        - mariadb   

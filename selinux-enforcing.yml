@@ -1,0 +1,10 @@
+---
+- name: set setlinux to enforcing
+  hosts: webservers
+  become: true
+  tasks:
+    - name: set selinux to enforcing
+      ansible.builtin.lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: SELINUX=disabled

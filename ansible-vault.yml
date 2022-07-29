@@ -1,0 +1,9 @@
+---
+- name: ansible playbook to test ansible vault
+  hosts: all
+  become: true
+  tasks:
+    - name: clone a repo
+      ansible.builtin.git:
+        repo: https://github.com/lokesh9898/vault.git
+        dest: /opt/ansadmin/test-vault

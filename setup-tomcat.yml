@@ -1,0 +1,38 @@
+---
+- name: setup tomcat playbook
+  hosts: all
+  become: true
+  tasks:
+    - name: install java on Redhat servers
+      yum:
+        name: java
+        state: installed
+      when: ansible_os_family == "RedHat"
+    
+    - name: install java on Ubuntu
+      apt:
+        name: default-jdk
+        state: present
+      when: ansible_os_family == "Debian"
+   
+    - name: Download the Tomcat packages from the Internet
+      ansible.builtin.get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
+        dest: /opt
+    
+    - name: untar apache tomcat package
+      unarchive:
+        src: /opt/apache-tomcat-10.0.23.tar.gz
+        dest: /opt
+        remote_src: yes
+
+    - name: add execution permssions on startup.sh file
+      file:
+        path: /opt/apache-tomcat-10.0.23/bin/startup.sh
+        mode: 0777
+          
+    - name: start tomcat services
+      ansible.builtin.shell: nohup ./startup.sh
+      args:
+        chdir: /opt/apache-tomcat-10.0.23/bin
+             

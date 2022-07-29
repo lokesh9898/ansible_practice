@@ -1,0 +1,38 @@
+---
+- name: Playbook for Installing httpd package
+  hosts: all
+  become: true
+  tasks:
+    - name: Install httpd package on RHEL and AmazonLinux
+      yum:
+        name: httpd
+        state: installed
+      when: ansible_os_family == "RedHat"  
+      tags: install_apache
+        
+    - name: start httpd service on RHEL and AmazonLinux
+      service:
+        name: httpd
+        state: started
+      when: ansible_os_family == "RedHat"  
+      tags: start_apache
+
+    - name: Install apache2 on Ubuntu
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: install_apache
+       
+    - name: Start apache2 service on Ubuntu
+      service:
+        name: apache2
+        state: started
+      when: ansible_os_family == "Debian"
+      tags: start_apache
+        
+    - name: copy index.html file to all servers
+      copy:
+        src: /opt/ansible/index.html
+        dest: /var/www/html
+        mode: 0666
